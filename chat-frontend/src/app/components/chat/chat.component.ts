@@ -25,7 +25,9 @@ import { Subscription } from 'rxjs';
           <p>Nu există mesaje încă. Începe conversația!</p>
         </div>
         
-        <div *ngFor="let message of messages" class="message">
+        <div *ngFor="let message of messages" class="message"
+             [class.my-message]="message.username === username"
+             [class.other-message]="message.username !== username">
           <div class="message-header">
             <span class="username">{{ message.username }}</span>
             <span class="timestamp">{{ formatTimestamp(message.timestamp) }}</span>
@@ -111,6 +113,9 @@ import { Subscription } from 'rxjs';
       overflow-y: auto;
       padding: 15px;
       background-color: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .no-messages {
@@ -123,10 +128,25 @@ import { Subscription } from 'rxjs';
     .message {
       margin-bottom: 15px;
       padding: 10px;
-      background: white;
       border-radius: 8px;
-      border-left: 4px solid #007bff;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      max-width: 70%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .my-message {
+      background-color: #007bff;
+      color: white;
+      align-self: flex-end;
+      border-top-right-radius: 2px;
+    }
+
+    .other-message {
+      background-color: #e9ecef;
+      color: #333;
+      align-self: flex-start;
+      border-top-left-radius: 2px;
     }
 
     .message-header {
@@ -136,9 +156,17 @@ import { Subscription } from 'rxjs';
       font-size: 0.9em;
     }
 
+    .my-message .message-header {
+      flex-direction: row-reverse;
+    }
+
     .username {
       font-weight: bold;
       color: #007bff;
+    }
+
+    .my-message .username {
+      display: none; /* Ascunde username-ul pentru mesajele proprii */
     }
 
     .timestamp {
@@ -146,9 +174,17 @@ import { Subscription } from 'rxjs';
       font-size: 0.8em;
     }
 
+    .my-message .timestamp {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
     .message-content {
       color: #333;
       line-height: 1.4;
+    }
+
+    .my-message .message-content {
+      color: white;
     }
 
     .message-form {

@@ -1,61 +1,56 @@
 <div class="chat-container">
-    <div class="chat-header">
-      <h2>Chat Room</h2>
-      <div class="connection-status">
-        <span [class]="'status-indicator ' + (isConnected ? 'connected' : 'disconnected')"></span>
-        <span class="status-text">{{ isConnected ? 'Conectat' : 'Deconectat' }}</span>
-        <button *ngIf="!isConnected" (click)="reconnect()" class="reconnect-btn">
-          Reconectare
-        </button>
-      </div>
+  <!-- Status de conectare -->
+  <div class="connection-status" [class.connected]="isConnected" [class.disconnected]="!isConnected">
+    <span *ngIf="isConnected" class="status-text">✅ Conectat la chat server</span>
+    <span *ngIf="!isConnected" class="status-text">❌ Deconectat de la chat server</span>
+    <button *ngIf="!isConnected" (click)="reconnect()" class="reconnect-btn">
+      🔄 Reconectare
+    </button>
+  </div>
+
+  <!-- Zona de mesaje -->
+  <div class="messages-container" #messagesContainer>
+    <div *ngIf="messages.length === 0" class="no-messages">
+      <p>Nu există mesaje încă. Începe conversația!</p>
     </div>
     
-    <div class="chat-messages" #messagesContainer>
-      <div *ngIf="messages.length === 0" class="no-messages">
-        <div class="no-messages-icon">💬</div>
-        <p>Nu există mesaje încă. Începe conversația!</p>
+    <div *ngFor="let message of messages" class="message" 
+         [class.my-message]="message.username === username" 
+         [class.other-message]="message.username !== username">
+      <div class="message-header">
+        <span class="username">{{ message.username }}</span>
+        <span class="timestamp">{{ formatTimestamp(message.timestamp) }}</span>
       </div>
-      
-      <div *ngFor="let message of messages; trackBy: trackByMessage" class="message">
-        <div class="message-header">
-          <span class="username">{{ message.username }}</span>
-          <span class="timestamp">{{ formatTimestamp(message.timestamp) }}</span>
-        </div>
-        <div class="message-content">{{ message.message }}</div>
-      </div>
-    </div>
-    
-    <div class="chat-input">
-      <div class="input-row">
-        <input 
-          type="text" 
-          [(ngModel)]="username" 
-          placeholder="Numele tău"
-          class="username-input"
-          [disabled]="!isConnected"
-          maxlength="50">
-        
-        <input 
-          type="text" 
-          [(ngModel)]="newMessage" 
-          (keypress)="onKeyPress($event)"
-          placeholder="Scrie un mesaj..."
-          class="message-input"
-          [disabled]="!isConnected || !username.trim()"
-          maxlength="500">
-        
-        <button 
-          (click)="sendMessage()" 
-          [disabled]="!isConnected || !newMessage.trim() || !username.trim()"
-          class="send-button"
-          title="Trimite mesaj">
-          <span class="send-icon">📤</span>
-          Trimite
-        </button>
-      </div>
-      
-      <div class="input-info" *ngIf="!isConnected">
-        <small>Conectarea la server în curs...</small>
-      </div>
+      <div class="message-content">{{ message.message }}</div>
+      <!-- Depanare: Afișează dacă este mesaj propriu -->
+      <small>(My: {{ message.username === username }})</small>
     </div>
   </div>
+
+  <!-- Form pentru noul mesaj -->
+  <div class="message-form">
+    <div class="form-row">
+      <input 
+        type="text" 
+        [(ngModel)]="username" 
+        placeholder="Numele tău" 
+        class="username-input"
+        [disabled]="!isConnected">
+      
+      <input 
+        type="text" 
+        [(ngModel)]="newMessage" 
+        placeholder="Scrie un mesaj..." 
+        class="message-input"
+        [disabled]="!isConnected"
+        (keyup.enter)="sendMessage()">
+      
+      <button 
+        (click)="sendMessage()" 
+        [disabled]="!isConnected || !canSend()"
+        class="send-btn">
+        📤 Trimite
+      </button>
+    </div>
+  </div>
+</div>
