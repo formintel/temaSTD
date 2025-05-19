@@ -1,0 +1,4 @@
+com/chat/Message.class
+com/chat/ChatEndpoint.class
+com/chat/CORSFilter.class
+com/chat/DatabaseManager.class
