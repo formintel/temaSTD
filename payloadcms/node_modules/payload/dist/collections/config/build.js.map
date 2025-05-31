@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/collections/config/build.ts"],"sourcesContent":["import type { CollectionConfig } from './types.js'\n\nconst buildCollection = (collection: CollectionConfig): CollectionConfig => collection\n\nexport default buildCollection\n"],"names":["buildCollection","collection"],"mappings":"AAEA,MAAMA,kBAAkB,CAACC,aAAmDA;AAE5E,eAAeD,gBAAe"}

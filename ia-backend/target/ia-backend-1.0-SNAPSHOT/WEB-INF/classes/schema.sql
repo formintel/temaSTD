@@ -1,0 +1,7 @@
+CREATE TABLE FileHistory (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    fileName NVARCHAR(255) NOT NULL,
+    blobUrl NVARCHAR(MAX) NOT NULL,
+    timestamp DATETIME NOT NULL,
+    result NVARCHAR(MAX)
+); 

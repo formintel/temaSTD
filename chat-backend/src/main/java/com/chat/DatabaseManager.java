@@ -1,104 +1,83 @@
 package com.chat;
 
-import java.sql.*;
+import com.mongodb.client.*;
+import org.bson.Document;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseManager {
-    private static final String DB_URL = "jdbc:h2:mem:chatdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
-    private static final String DB_USER = "sa";
-    private static final String DB_PASSWORD = "";
+    private static final String CONNECTION_STRING = "mongodb://localhost:27017";
+    private static final String DATABASE_NAME = "chatdb";
+    private static final String COLLECTION_NAME = "messages";
+    private static MongoClient mongoClient;
+    private static MongoCollection<Document> collection;
 
     static {
         try {
-            // Încarcă driver-ul H2
-            Class.forName("org.h2.Driver");
-            
-            // Inițializează baza de date și creează tabelul
-            initializeDatabase();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void initializeDatabase() {
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             Statement stmt = conn.createStatement()) {
-            
-            // Creează tabelul pentru mesaje dacă nu există
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS messages (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "username VARCHAR(255) NOT NULL, " +
-                    "message TEXT NOT NULL, " +
-                    "timestamp VARCHAR(255) NOT NULL" +
-                    ")";
-            
-            stmt.executeUpdate(createTableSQL);
-            System.out.println("Database initialized successfully");
-            
-        } catch (SQLException e) {
+            mongoClient = MongoClients.create(CONNECTION_STRING);
+            MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
+            collection = database.getCollection(COLLECTION_NAME);
+            System.out.println("MongoDB connection established successfully to " + CONNECTION_STRING);
+        } catch (Exception e) {
+            System.err.println("Failed to connect to MongoDB: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public static void saveMessage(Message message) {
-        String insertSQL = "INSERT INTO messages (username, message, timestamp) VALUES (?, ?, ?)";
-        
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
-            
-            pstmt.setString(1, message.getUsername());
-            pstmt.setString(2, message.getMessage());
-            pstmt.setString(3, message.getTimestamp());
-            
-            pstmt.executeUpdate();
+        if (mongoClient == null) {
+            System.err.println("Cannot save message: MongoDB connection is not available");
+            return;
+        }
+        try {
+            Document doc = new Document("username", message.getUsername())
+                    .append("message", message.getMessage())
+                    .append("timestamp", message.getTimestamp());
+            collection.insertOne(doc);
             System.out.println("Message saved: " + message);
-            
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            System.err.println("Failed to save message: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public static List<Message> getAllMessages() {
         List<Message> messages = new ArrayList<>();
-        String selectSQL = "SELECT username, message, timestamp FROM messages ORDER BY id ASC";
-        
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(selectSQL)) {
-            
-            while (rs.next()) {
+        if (mongoClient == null) {
+            System.err.println("Cannot retrieve messages: MongoDB connection is not available");
+            return messages;
+        }
+        try {
+            FindIterable<Document> documents = collection.find();
+            for (Document doc : documents) {
                 Message message = new Message(
-                    rs.getString("username"),
-                    rs.getString("message"),
-                    rs.getString("timestamp")
+                        doc.getString("username"),
+                        doc.getString("message"),
+                        doc.getString("timestamp")
                 );
                 messages.add(message);
             }
-            
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            System.err.println("Failed to retrieve messages: " + e.getMessage());
             e.printStackTrace();
         }
-        
         return messages;
     }
 
-    // Metodă pentru testare - șterge toate mesajele
     public static void clearAllMessages() {
-        String deleteSQL = "DELETE FROM messages";
-        
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             Statement stmt = conn.createStatement()) {
-            
-            stmt.executeUpdate(deleteSQL);
+        if (mongoClient == null) {
+            System.err.println("Cannot clear messages: MongoDB connection is not available");
+            return;
+        }
+        try {
+            collection.deleteMany(new Document());
             System.out.println("All messages cleared");
-            
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            System.err.println("Failed to clear messages: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Metodă pentru debugging - printează toate mesajele
     public static void printAllMessages() {
         List<Message> messages = getAllMessages();
         System.out.println("=== All Messages in Database ===");
@@ -106,5 +85,12 @@ public class DatabaseManager {
             System.out.println(msg);
         }
         System.out.println("================================");
+    }
+
+    public static void close() {
+        if (mongoClient != null) {
+            mongoClient.close();
+            System.out.println("MongoDB connection closed");
+        }
     }
 }

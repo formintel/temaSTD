@@ -1,0 +1,4 @@
+com\ia\IaServlet.class
+com\ia\CORSFilter.class
+com\ia\DownloadServlet.class
+com\ia\HistoryServlet.class

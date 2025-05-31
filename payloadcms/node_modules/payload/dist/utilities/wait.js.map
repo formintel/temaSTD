@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/utilities/wait.ts"],"sourcesContent":["// @ts-strict-ignore\nexport async function wait(ms) {\n  return new Promise((resolve) => {\n    setTimeout(resolve, ms)\n  })\n}\n"],"names":["wait","ms","Promise","resolve","setTimeout"],"mappings":"AAAA,oBAAoB;AACpB,OAAO,eAAeA,KAAKC,EAAE;IAC3B,OAAO,IAAIC,QAAQ,CAACC;QAClBC,WAAWD,SAASF;IACtB;AACF"}
