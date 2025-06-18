@@ -1,4 +1,2 @@
-com\ia\IaServlet.class
-com\ia\CORSFilter.class
-com\ia\DownloadServlet.class
-com\ia\HistoryServlet.class
+com\ia\IaController.class
+com\ia\IaApplication.class

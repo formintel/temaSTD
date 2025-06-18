@@ -1,4 +1,3 @@
-D:\Desktop\STD_TTEMA\temaSTD\ia-backend\src\main\java\com\ia\IaServlet.java
-D:\Desktop\STD_TTEMA\temaSTD\ia-backend\src\main\java\com\ia\CORSFilter.java
-D:\Desktop\STD_TTEMA\temaSTD\ia-backend\src\main\java\com\ia\DownloadServlet.java
-D:\Desktop\STD_TTEMA\temaSTD\ia-backend\src\main\java\com\ia\HistoryServlet.java
+D:\Desktop\STD_TTEMA\temaSTD\ia-backend\src\main\java\com\ia\IaApplication.java
+D:\Desktop\STD_TTEMA\temaSTD\ia-backend\src\main\java\com\ia\CorsConfig.java
+D:\Desktop\STD_TTEMA\temaSTD\ia-backend\src\main\java\com\ia\IaController.java

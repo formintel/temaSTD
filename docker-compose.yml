@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  ia-frontend:
+    build:
+      context: ./ia-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "91:80"
+    networks:
+      - app-network
+    depends_on:
+      - ia-backend
+    restart: unless-stopped
+
+  ia-backend:
+    build:
+      context: ./ia-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://stdtema-sql.database.windows.net:1433;database=iaDB;user=dbadmin@stdtema-sql;password=Parola1234;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+      - SPRING_DATASOURCE_USERNAME=dbadmin@stdtema-sql
+      - SPRING_DATASOURCE_PASSWORD=Parola1234
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  chat-frontend:
+    build:
+      context: ./chat-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "90:80"
+    networks:
+      - app-network
+    depends_on:
+      - chat-backend
+    restart: unless-stopped
+
+  chat-backend:
+    build:
+      context: ./chat-backend
+      dockerfile: Dockerfile
+    ports:
+      - "88:8080"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017
+      - MONGODB_DATABASE=chatdb
+    networks:
+      - app-network
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongodb_data: 

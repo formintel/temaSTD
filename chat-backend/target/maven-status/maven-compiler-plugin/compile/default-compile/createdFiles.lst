@@ -1,3 +1,4 @@
+com\chat\HealthCheckServlet.class
 com\chat\Message.class
 com\chat\CORSFilter.class
 com\chat\DatabaseManager.class

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseManager {
-    private static final String CONNECTION_STRING = "mongodb://localhost:27017";
+    private static final String CONNECTION_STRING = "mongodb://mongodb:27017";
     private static final String DATABASE_NAME = "chatdb";
     private static final String COLLECTION_NAME = "messages";
     private static MongoClient mongoClient;

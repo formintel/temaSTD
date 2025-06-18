@@ -158,7 +158,7 @@ export class IaComponent implements OnInit {
       const formData = new FormData();
       formData.append('file', this.selectedFile);
       
-      this.http.post('http://localhost:8080/ia-backend-1.0-SNAPSHOT/ia/process', formData, { 
+      this.http.post('http://localhost:8080/ia/process', formData, { 
         responseType: 'text',
         observe: 'response'
       })
@@ -196,7 +196,7 @@ export class IaComponent implements OnInit {
   
   loadHistory() {
     console.log('Loading history...');
-    this.http.get<any[]>('http://localhost:8080/ia-backend-1.0-SNAPSHOT/ia/history')
+    this.http.get<any[]>('http://localhost:8080/ia/history')
       .subscribe(
         (data) => {
           console.log('History loaded:', data);
@@ -213,7 +213,7 @@ export class IaComponent implements OnInit {
   }
 
   downloadFile(blobName: string) {
-    const url = `http://localhost:8080/ia-backend-1.0-SNAPSHOT/ia/download?blobName=${encodeURIComponent(blobName)}`;
+    const url = `http://localhost:8080/ia/download?blobName=${encodeURIComponent(blobName)}`;
     window.open(url, '_blank');
   }
 }

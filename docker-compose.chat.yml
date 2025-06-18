@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  chat-backend:
+    build:
+      context: ./chat-backend
+      dockerfile: Dockerfile
+    ports:
+      - "88:88"
+    networks:
+      - chat-network
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  chat-frontend:
+    build:
+      context: ./chat-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "90:90"
+    networks:
+      - chat-network
+    depends_on:
+      - chat-backend
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - chat-network
+    restart: unless-stopped
+
+networks:
+  chat-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

@@ -1,6 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface ChatMessage {
   username: string;
@@ -17,8 +18,6 @@ export class ChatService {
   private connectionSubject = new BehaviorSubject<boolean>(false);
   private reconnectInterval: any;
   private reconnectDelay = 5000; // 5 seconds
-
-  private readonly serverUrl = 'ws://localhost:88/chat';
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     // Doar inițializează WebSocket în browser
@@ -48,7 +47,7 @@ export class ChatService {
         return;
       }
 
-      this.socket = new WebSocket(this.serverUrl);
+      this.socket = new WebSocket(environment.wsUrl);
 
       this.socket.onopen = () => {
         console.log('Conectat la server WebSocket');
